@@ -5,10 +5,15 @@ from http import HTTPStatus
 
 
 def fetch_urls(url):
-    res = requests.get(url)
+    try:
+        res = requests.get(url)
+
+    except Exception:
+        return []
+
     if (
         res.status_code != HTTPStatus.OK
-        or res.headers.get("content-type") != "text/html"
+        or "text/html" not in res.headers["content-type"]
     ):
         return []
 
@@ -18,7 +23,8 @@ def fetch_urls(url):
 
 @click.command()
 @click.option("--url", required=True, help="Home Page URL")
-def main(url):
+@click.option("--depth", default=-1, required=True, help="Recursive length", type=int)
+def main(url, depth):
     urls_to_fetch = [url]
     while True:
         res_urls = set()
@@ -31,6 +37,11 @@ def main(url):
             for url in fetched_urls:
                 click.echo(f"\t{url.get('href')}")
                 res_urls.add(url.get("href"))
+
+        if depth is not None:
+            depth -= 1
+            if depth == 0:
+                break
 
         urls_to_fetch = res_urls
 
