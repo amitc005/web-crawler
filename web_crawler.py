@@ -2,23 +2,35 @@ import requests
 import click
 from bs4 import BeautifulSoup
 from http import HTTPStatus
+import concurrent.futures
 
 
 def fetch_urls(url):
     try:
         res = requests.get(url)
 
-    except Exception:
+    except Exception as e:
+        click.echo(f"Error: {e}")
         return []
 
     if (
         res.status_code != HTTPStatus.OK
         or "text/html" not in res.headers["content-type"]
     ):
+        click.echo(f"Error: {url}")
         return []
 
     soup = BeautifulSoup(res.content, "html.parser")
-    return soup.find_all("a", href=lambda x: x and x.startswith("http"))
+    return [
+        anchor_tag.get("href")
+        for anchor_tag in soup.find_all("a", href=lambda x: x and x.startswith("http"))
+    ]
+
+
+def display_urls(req_url, data):
+    click.echo("Fetching URLs from {}".format(req_url))
+    for url in data:
+        click.echo(f"\t{url}")
 
 
 @click.command()
@@ -26,24 +38,26 @@ def fetch_urls(url):
 @click.option("--depth", default=-1, required=True, help="Recursive length", type=int)
 def main(url, depth):
     urls_to_fetch = [url]
+
     while True:
         res_urls = set()
-        for req_url in urls_to_fetch:
-            click.echo("Fetching URLs from {}".format(req_url))
-            fetched_urls = fetch_urls(req_url)
-            if not fetched_urls:
-                click.echo("{} is could be unsupported URL or empty".format(req_url))
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=len(urls_to_fetch)
+        ) as executor:
+            future_to_url = {
+                executor.submit(fetch_urls, url): url for url in urls_to_fetch
+            }
+            for future in concurrent.futures.as_completed(future_to_url):
+                url = future_to_url[future]
+                res_urls = future.result()
+                display_urls(url, res_urls)
 
-            for url in fetched_urls:
-                click.echo(f"\t{url.get('href')}")
-                res_urls.add(url.get("href"))
+            if depth is not None:
+                depth -= 1
+                if depth == 0:
+                    break
 
-        if depth is not None:
-            depth -= 1
-            if depth == 0:
-                break
-
-        urls_to_fetch = res_urls
+            urls_to_fetch = res_urls
 
 
 if __name__ == "__main__":

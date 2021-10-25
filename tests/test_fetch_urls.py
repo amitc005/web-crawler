@@ -22,7 +22,6 @@ class TestFetchURls(unittest.TestCase):
         urls = fetch_urls(URL)
         self.assertTrue(isinstance(urls, list))
         self.assertEqual(len(urls), 2)
-        urls = [url.get("href") for url in urls]
         self.assertEqual(urls, expected_urls)
 
     @patch("web_crawler.requests.get")
