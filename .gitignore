@@ -1,0 +1,42 @@
+### Django ###
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media
+
+# End of https://www.gitignore.io/api/django
+# files to be ignored from RateAPIView the dev server
+
+*.err
+static/
+settings.py.mysql
+settings.py.postgre
+eggcache/
+wsdl_cache/
+log.txt
+log.err
+log.err.old
+logrotate.log
+log.err.old
+.DS_Store
+._.DS_Store
+env/
+venv/
+gunicorn.socket
+htmlcov/
+.coverage
+cov.xml
+
+
+# Idea configuration
+.idea
+.vscode
+tsconfig.json
+/coverage
+test_results.xml
+.autoenv*
+.pytest_cache
+**logs/
