@@ -30,6 +30,7 @@ gunicorn.socket
 htmlcov/
 .coverage
 cov.xml
+*egg*
 
 
 # Idea configuration

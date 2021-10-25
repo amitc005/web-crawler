@@ -1,3 +1,58 @@
+## Web Crawler
+
+### Requirements
+
+- Python 3.6+ [Download](https://www.python.org/downloads/)
+
+1. Clone the source repository and initialize the code.
+
+   ```
+   $ git clone https://github.com/amitc005/web-crawler.git
+   ```
+
+2. (Optional but highly recommended): creating virtual environment.
+
+   ```
+   $ python3 -m venv env
+   $ source env/bin/activate
+   ```
+
+3. Install the project locally.
+
+   ```
+   (env) $ pip install --editable .
+
+   ```
+
+4. To run unit tests.
+
+   ```
+   (env) $ python test.py
+
+   ```
+
+### A Simple Example
+
+1. Simple run
+
+```
+    (env) web-crawler --url https://www.google.com
+
+```
+
+2. With depth option
+
+```
+    (env) #web-crawler --url https://www.google.com --depth 2
+
+```
+
+### Note
+
+- From the first commit(6fdbaec75688ca10f96e22d45be4af54520d9d2c) to the last (fb6e340f843d31157f77650d9fa4b1dd03e50b21), this project has taken approximately 4 hours.
+
+# Question
+
 ### Build Your Own Web Crawler
 
 The goal of this project is to build a very simple web crawler which fetches URLs and outputs crawl

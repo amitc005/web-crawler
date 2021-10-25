@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from web_crawler import fetch_urls
+from src.cli import fetch_urls
 from http import HTTPStatus
 
 from collections import namedtuple
@@ -11,7 +11,7 @@ URL = "https://test.com"
 class TestFetchURls(unittest.TestCase):
     HTML_MIME_TYPE = "text/html; charset=utf-8"
 
-    @patch("web_crawler.get_session")
+    @patch("src.cli.get_session")
     def test_fetch_urls(self, mock_get):
         MockResponse = namedtuple("MockResponse", ["status_code", "headers", "content"])
         expected_urls = ["https://test1.com", "https://test2.com"]
@@ -27,7 +27,7 @@ class TestFetchURls(unittest.TestCase):
         self.assertEqual(len(urls), 2)
         self.assertEqual(urls, expected_urls)
 
-    @patch("web_crawler.get_session")
+    @patch("src.cli.get_session")
     def test_fetch_urls_with_empty_results(self, mock_get):
         MockResponse = namedtuple("MockResponse", ["status_code", "headers", "content"])
         html_content = "<html></html>"
@@ -38,7 +38,7 @@ class TestFetchURls(unittest.TestCase):
         self.assertTrue(isinstance(urls, list))
         self.assertEqual(len(urls), 0)
 
-    @patch("web_crawler.get_session")
+    @patch("src.cli.get_session")
     def test_fetch_urls_with_unsuccess_response_code(self, mock_get):
         MockResponse = namedtuple("MockResponse", ["status_code", "headers"])
         mock_get.return_value.get.return_value = MockResponse(
@@ -48,7 +48,7 @@ class TestFetchURls(unittest.TestCase):
         self.assertTrue(isinstance(urls, list))
         self.assertEqual(len(urls), 0)
 
-    @patch("web_crawler.get_session")
+    @patch("src.cli.get_session")
     def test_fetch_urls_with_unknown_mime_type(self, mock_get):
         MockResponse = namedtuple("MockResponse", ["status_code", "headers"])
         mock_get.return_value.get.return_value = MockResponse(
@@ -58,7 +58,7 @@ class TestFetchURls(unittest.TestCase):
         self.assertTrue(isinstance(urls, list))
         self.assertEqual(len(urls), 0)
 
-    @patch("web_crawler.get_session")
+    @patch("src.cli.get_session")
     def test_fetch_urls_with_exception(self, mock_get):
         mock_get.return_value.get.side_effect = Exception()
         urls = fetch_urls(URL)

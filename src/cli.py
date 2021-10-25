@@ -46,8 +46,14 @@ def display_urls(req_url, data):
 
 @click.command()
 @click.option("--url", required=True, help="Home Page URL")
-@click.option("--depth", default=-1, required=True, help="Recursive length", type=int)
-def main(url, depth):
+@click.option(
+    "--depth",
+    default=-1,
+    required=True,
+    help="Recursive length",
+    type=click.IntRange(0),
+)
+def cli(url, depth):
     urls_to_fetch = [url]
 
     while depth != 0:
@@ -70,4 +76,4 @@ def main(url, depth):
 
 
 if __name__ == "__main__":
-    main()
+    cli()
