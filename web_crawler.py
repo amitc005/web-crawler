@@ -3,11 +3,22 @@ import click
 from bs4 import BeautifulSoup
 from http import HTTPStatus
 import concurrent.futures
+import threading
+
+
+thread_local = threading.local()
+
+
+def get_session():
+    if not hasattr(thread_local, "session"):
+        thread_local.session = requests.Session()
+    return thread_local.session
 
 
 def fetch_urls(url):
     try:
-        res = requests.get(url)
+        session = get_session()
+        res = session.get(url)
 
     except Exception as e:
         click.echo(f"Error: {e}")
@@ -39,7 +50,7 @@ def display_urls(req_url, data):
 def main(url, depth):
     urls_to_fetch = [url]
 
-    while True:
+    while depth != 0:
         res_urls = set()
         with concurrent.futures.ThreadPoolExecutor(
             max_workers=len(urls_to_fetch)
@@ -52,12 +63,10 @@ def main(url, depth):
                 res_urls = future.result()
                 display_urls(url, res_urls)
 
-            if depth is not None:
-                depth -= 1
-                if depth == 0:
-                    break
+        if depth > 0:
+            depth -= 1
 
-            urls_to_fetch = res_urls
+        urls_to_fetch = res_urls
 
 
 if __name__ == "__main__":
