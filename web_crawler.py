@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 
 
 def fetch_urls(url):
-    click.echo("Fetching URLs from {}".format(url))
     res = requests.get(url)
     soup = BeautifulSoup(res.content, "html.parser")
     return soup.find_all("a", href=lambda x: x and x.startswith("http"))
@@ -19,6 +18,7 @@ def main(url):
 
         for url in urls_to_fetch:
             for url in fetch_urls(url):
+                click.echo("Fetching URLs from {}".format(url))
                 click.echo(f"\t{url.get('href')}")
                 res_urls.add(url.get("href"))
 
